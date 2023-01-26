@@ -1,8 +1,7 @@
 import React from "react";
-import OrderScreen from "../OrderScreen/OrderScreen";
 
 
-function Form({ handleChange, handleSubmit, form, items }) {
+function Form({ handleChange, handleSubmit, form }) {
     return (
         <div className="card-body">
             <form>
@@ -30,7 +29,6 @@ function Form({ handleChange, handleSubmit, form, items }) {
                         required
                     />
                 </div>
-                <OrderScreen item={items} />
                 <button onClick={handleSubmit} type="submit" className="btn btn-primary m-2">
                     Submit
                 </button>
