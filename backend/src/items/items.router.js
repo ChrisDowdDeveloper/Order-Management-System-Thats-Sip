@@ -1,9 +1,9 @@
 const methodNotAllowed = require("../errors/methodNotAllowed");
 const router = require("express").Router();
-const controller = require("./users.controller");
+const controller = require("./items.controller");
 
 router
-    .route("/items")
+    .route("/")
     .get(controller.list)
     .all(methodNotAllowed);
 

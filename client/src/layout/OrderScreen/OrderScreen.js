@@ -1,9 +1,10 @@
 import React from "react";
 
-export default function OrderScreen() {
+export default function OrderScreen({ items }) {
+
     return (
         <div>
-            <p>This is the order screen</p>
+            <h1>Items</h1>
         </div>
     )
 }
