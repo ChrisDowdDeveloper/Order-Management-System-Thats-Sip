@@ -5,6 +5,7 @@ const controller = require("./items.controller");
 router
     .route("/")
     .get(controller.list)
+    .post(controller.create)
     .all(methodNotAllowed);
 
 

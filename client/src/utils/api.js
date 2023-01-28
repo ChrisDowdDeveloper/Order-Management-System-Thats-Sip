@@ -31,7 +31,6 @@ async function fetchJson(url, options, onCancel) {
         if (payload.error) {
             return Promise.reject({ message: payload.error });
         }
-        //console.log(payload.data)
         return payload.data;
     } catch (error) {
         if (error.name !== "AbortError") {
@@ -41,15 +40,15 @@ async function fetchJson(url, options, onCancel) {
     }
 }
 
-export async function callBot(form, signal) {
-    const url = new URL(`${API_BASE_URL}/items`);
+export async function callBot(form, order, signal) {
+    const url = new URL(`http://localhost:8080/items`);
     const options = {
         method: "POST",
         headers,
-        body: JSON.stringify({ form }),
+        body: JSON.stringify({ form, order }),
         signal,
     };
-    return await fetchJson(url, { headers, signal }, []);
+    return await fetchJson(url, options);
 }
 
 export async function listItems(signal) {

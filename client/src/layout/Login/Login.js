@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import ErrorAlert from '../../ErrorAlert';
 import Form from '../Form/Form';
-import { callBot } from '../../utils/api';
 import OrderScreen from '../OrderScreen/OrderScreen';
 
 export default function Login() {
-    const [error, setError] = useState([]);
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -21,26 +18,15 @@ export default function Login() {
         });
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const abortController = new AbortController();
-        try {
-            await callBot(form, abortController.signal);
-        } catch (err) {
-            setError([err.message]);
-        }
-        return () => abortController.abort();
-    }
-
     return (
         <div>
-            <ErrorAlert error={error} />
             <Form
                 handleChange={handleChange}
-                handleSubmit={handleSubmit}
                 form={form}
             />
-            <OrderScreen />
+            <OrderScreen 
+                form={form}
+            />
         </div >
     )
 }

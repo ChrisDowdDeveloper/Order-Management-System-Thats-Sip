@@ -1,7 +1,7 @@
 import React from "react";
 
 
-function Form({ handleChange, handleSubmit, form }) {
+function Form({ handleChange, form }) {
     return (
         <div className="card-body">
             <form>
@@ -29,9 +29,6 @@ function Form({ handleChange, handleSubmit, form }) {
                         required
                     />
                 </div>
-                <button onClick={handleSubmit} type="submit" className="btn btn-primary m-2">
-                    Submit
-                </button>
             </form>
         </div>
     );
