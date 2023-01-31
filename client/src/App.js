@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from './layout/Login/Login';
+import AddItem from './layout/AddItem/AddItem';
 
 function App() {
 
@@ -11,8 +12,9 @@ function App() {
           path="/"
           element={<Login />}
         />
-        <Route 
+        <Route
           path="/items/new"
+          element={<AddItem />}
         />
       </Routes>
     </BrowserRouter >

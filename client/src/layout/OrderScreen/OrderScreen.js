@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "./orderScreen.css";
 import { listItems } from "../../utils/api";
 import ErrorAlert from "../../ErrorAlert";
 import { callBot } from '../../utils/api';
 import trashCan from '../../utils/icons/trash-outline.svg';
 import cart from '../../utils/icons/cart-outline.svg';
-import AddItem from "../AddItem/AddItem";
+import { deleteItem } from "../../utils/api";
 
 export default function OrderScreen({ form }) {
     const [items, setItems] = useState([]);
@@ -39,7 +40,7 @@ export default function OrderScreen({ form }) {
         let index = order.findIndex(o => o.item_id === event.target.id);
         order.splice(index, 1);
         setError(`${event.target.name} removed`);
-        if(orderSize > 0) {
+        if (orderSize > 0) {
             setOrderSize(orderSize - 1);
         } else {
             setOrderSize(0);
@@ -64,11 +65,11 @@ export default function OrderScreen({ form }) {
     const handleRemoveItem = async (item) => {
         const abortController = new AbortController();
         try {
-            if(window.confirm("Are you sure you want to remove this item?")) {
-                await deleteItem( item.id, abortController.signal)
+            if (window.confirm("Are you sure you want to remove this item?")) {
+                await deleteItem(item.id, abortController.signal)
                     .then(window.location.reload());
             }
-        } catch(err) {
+        } catch (err) {
             setError(err)
         }
         return () => abortController.abort();
@@ -78,12 +79,19 @@ export default function OrderScreen({ form }) {
         <div>
             <ErrorAlert error={error} />
             <button onClick={handleSubmit} type="submit" className="btn btn-primary m-2">
-                    Submit
+                Submit
             </button>
-            <AddItem />
+            <br />
+            <button
+                className="addButton"
+            >
+                <Link to="/items/new">
+                    Add Items
+                </Link>
+            </button>
             {items.map(item => (
                 <div key={item.item_id}>
-                    <div className="card mb-3" style={{maxWidth: 400 + 'px'}}>
+                    <div className="card mb-3" style={{ maxWidth: 400 + 'px' }}>
                         <div className="row g-0">
                             <button
                                 className="removeItem"

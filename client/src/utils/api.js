@@ -52,8 +52,19 @@ export async function callBot(form, order, signal) {
 }
 
 export async function listItems(signal) {
-  const url = new URL(`http://localhost:8080/items`);
-  return await fetchJson(url, { headers, signal }, [])
+    const url = new URL(`http://localhost:8080/items`);
+    return await fetchJson(url, { headers, signal }, [])
+}
+
+export async function createItem(data, signal) {
+    const url = 'http://localhost:8080/items';
+    const options = {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ data }),
+        signal,
+    };
+    return await fetchJson(url, options);
 }
 
 export async function deleteItem(item_id, signal) {
