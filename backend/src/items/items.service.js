@@ -5,6 +5,12 @@ function list() {
         .select("*");
 };
 
+function deleteItem(item_id) {
+    return knex("items")
+        .where({ item_id })
+}
+
 module.exports = {
     list,
+    deleteItem,
 }

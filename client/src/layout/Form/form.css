@@ -1,0 +1,19 @@
+form {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10%;
+}
+
+.email, .password {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+}
+
+label {
+    text-align: center;
+}
+
+input {
+    width: 20em;
+}

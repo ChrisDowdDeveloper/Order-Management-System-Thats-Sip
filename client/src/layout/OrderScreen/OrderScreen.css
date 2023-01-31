@@ -1,3 +1,56 @@
-.border {
+.item {
+    width: 25%;
     border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+}
+
+.itemName {
+    text-align: center;
+}
+
+.addToOrder, .removeFromOrder {
+    width: 20%;
+    margin: auto;
+    filter: invert(0.5) sepia(1) saturate(5) hue-rotate(490deg)
+}
+
+.itemRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    margin-right: 2%;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    text-align: center;
+    font-size: larger;
+    font-weight: bold;
+}
+
+.card-text {
+    margin-top: 35%;
+    text-align: center;
+}
+
+.img-row {
+    margin-top: 5%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.removeItem {
+    border: none;
+    background-color: #E83E3E;
+    font-weight: bold;
 }

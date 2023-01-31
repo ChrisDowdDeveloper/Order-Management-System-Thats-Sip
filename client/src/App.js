@@ -11,6 +11,9 @@ function App() {
           path="/"
           element={<Login />}
         />
+        <Route 
+          path="/items/new"
+        />
       </Routes>
     </BrowserRouter >
   );

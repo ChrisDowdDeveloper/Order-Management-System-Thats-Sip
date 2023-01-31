@@ -55,3 +55,14 @@ export async function listItems(signal) {
   const url = new URL(`http://localhost:8080/items`);
   return await fetchJson(url, { headers, signal }, [])
 }
+
+export async function deleteItem(item_id, signal) {
+    const url = `http://localhost:8080/items/${item_id}`;
+    const options = {
+        method: "DELETE",
+        headers,
+        body: JSON.stringify({ data: { item_id } }),
+        signal,
+    };
+    return await fetchJson(url, options);
+}
