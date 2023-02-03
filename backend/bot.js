@@ -23,15 +23,19 @@ async function loginPage(page, form) {
 async function addToCart(page, temp) {
     for (let i = 0; i < temp.length; i++) {
         await page.goto(temp[i]);
-        await page.waitForSelector("input[class='btn btn-cart btn-large']");
-        await page.click("input[class='btn btn-cart btn-large']", elem => elem.click());
-        console.log("added to cart");
-        await delay(500);
-    }
-}
+        if (await page.waitForSelector("div[id='unavailableContainer']")) {
 
-async function goToCart(page) {
-    await page.goto(cart_url);
+        }
+        await page.waitForSelector("input[class='btn btn-cart btn-large']");
+        if (page.waitForSelector("input[class='btn btn-cart btn-large']")) {
+            await page.click("input[class='btn btn-cart btn-large']", elem => elem.click());
+            console.log("added to cart");
+            await delay(700);
+        } else {
+            await page.goto(temp[i + 1])
+        }
+
+    }
 }
 
 //Call the checkout function when form is submitted

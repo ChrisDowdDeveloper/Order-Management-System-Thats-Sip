@@ -31,10 +31,12 @@
     background-color: #E83E3E;
     font-weight: bold;
     height: 15em;
+    color: white;
+    margin: auto;
 }
 
 .productImage {
-    width: 50%;
+    width: 40%;
 }
 
 .column {
