@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./orderScreen.css";
-import { listItems } from "../../utils/api";
+import { listItems, callBot, deleteItem } from "../../utils/api";
 import ErrorAlert from "../../ErrorAlert";
-import { callBot } from '../../utils/api';
 import trashCan from '../../utils/icons/trash-outline.svg';
 import cart from '../../utils/icons/cart-outline.svg';
-import { deleteItem } from "../../utils/api";
 
 export default function OrderScreen({ form }) {
     const [items, setItems] = useState([]);
     const [error, setError] = useState([]);
     const [orderSize, setOrderSize] = useState(0);
-
     let order = [];
 
     function loadItems() {
@@ -32,7 +29,6 @@ export default function OrderScreen({ form }) {
             item_id: event.target.id,
         }
         order.push(item)
-        console.log(order.length);
     }
 
     const handleDelete = (event) => {
@@ -45,8 +41,6 @@ export default function OrderScreen({ form }) {
         } else {
             setOrderSize(0);
         }
-        console.log(order);
-        console.log(order.length)
     }
 
     const handleSubmit = async (event) => {
@@ -62,11 +56,11 @@ export default function OrderScreen({ form }) {
         return () => abortController.abort();
     }
 
-    const handleRemoveItem = async (item) => {
+    const handleRemoveItem = async (item_id) => {
         const abortController = new AbortController();
         try {
             if (window.confirm("Are you sure you want to remove this item?")) {
-                await deleteItem(item.id, abortController.signal)
+                await deleteItem(item_id, abortController.signal)
                     .then(window.location.reload());
             }
         } catch (err) {
@@ -76,7 +70,7 @@ export default function OrderScreen({ form }) {
     };
 
     return (
-        <div>
+        <div className="height">
             <ErrorAlert error={error} />
             <button onClick={handleSubmit} type="submit" className="btn btn-primary m-2">
                 Submit
@@ -89,21 +83,18 @@ export default function OrderScreen({ form }) {
                     Add Items
                 </Link>
             </button>
-            {items.map(item => (
-                <div key={item.item_id}>
-                    <div className="card mb-3" style={{ maxWidth: 400 + 'px' }}>
-                        <div className="row g-0">
-                            <button
-                                className="removeItem"
-                                onClick={handleRemoveItem}
-                            >
-                                X
-                            </button>
-                            <div className="col-md-4">
-                                <img src={item.item_jpg} width="90%" className="img-fluid rounded-start" alt="the item" />
-                            </div>
-                            <div className="col-md-8">
-                                <div className="card-body">
+            <div className="itemsRow">
+                {items.map(item => (
+                    <div className="item" key={item.item_id}>
+                            <div className="row">
+                                <button
+                                    className="removeItem"
+                                    onClick={() => handleRemoveItem(item.item_id)}
+                                >
+                                    X
+                                </button>
+                                <img src={item.item_jpg} className="productImage" alt="the item" />
+                                <div className="column">
                                     <h1 className="card-title">{item.item_name}</h1>
                                     <p className="card-text">Control: {item.item_control}</p>
                                     <div className="img-row">
@@ -128,12 +119,11 @@ export default function OrderScreen({ form }) {
                                             alt="add to order"
                                         />
                                     </div>
-                                </div>
+                                </div>    
                             </div>
-                        </div>
                     </div>
-                </div>
-            ))}
+                ))}
+            </div>
         </div>
     )
 }

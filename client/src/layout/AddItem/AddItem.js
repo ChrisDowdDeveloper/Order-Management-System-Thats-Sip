@@ -27,7 +27,7 @@ export default function AddItem() {
         const abortController = new AbortController();
         try {
             await createItem(form, abortController.signal);
-            navigate("/items");
+            navigate("/");
         } catch (err) {
             setFormError([err.message]);
         }
@@ -71,7 +71,7 @@ export default function AddItem() {
                 <button onClick={handleSubmit}>
                     Submit
                 </button>
-                <button onClick={() => navigate("/items")}>
+                <button onClick={() => navigate("/")}>
                     Cancel
                 </button>
             </form>

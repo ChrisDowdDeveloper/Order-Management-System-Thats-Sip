@@ -43,7 +43,7 @@ async function fetchJson(url, options, onCancel) {
 export async function callBot(form, order, signal) {
     const url = new URL(`http://localhost:8080/items`);
     const options = {
-        method: "POST",
+        method: "PUT",
         headers,
         body: JSON.stringify({ form, order }),
         signal,
@@ -57,6 +57,7 @@ export async function listItems(signal) {
 }
 
 export async function createItem(data, signal) {
+    console.log(data);
     const url = 'http://localhost:8080/items';
     const options = {
         method: "POST",
@@ -72,7 +73,7 @@ export async function deleteItem(item_id, signal) {
     const options = {
         method: "DELETE",
         headers,
-        body: JSON.stringify({ data: { item_id } }),
+        body: JSON.stringify({ item_id }),
         signal,
     };
     return await fetchJson(url, options);

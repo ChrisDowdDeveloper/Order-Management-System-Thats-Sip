@@ -5,7 +5,8 @@ const controller = require("./items.controller");
 router
     .route("/")
     .get(controller.list)
-    .post(controller.create)
+    .post(controller.createItem)
+    .put(controller.create)
     .all(methodNotAllowed);
 
 router
