@@ -65,11 +65,14 @@
     text-align: center;
 }
 
-.addToOrder,
 .removeFromOrder {
     width: 20%;
     margin: auto;
     filter: invert(0.5) sepia(1) saturate(5) hue-rotate(490deg)
+}
+
+.addToOrder {
+    width: 100%;
 }
 
 .itemRow {

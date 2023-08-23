@@ -3,62 +3,62 @@ import { Link } from "react-router-dom";
 import "./orderScreen.css";
 import { listItems, callBot, deleteItem } from "../../utils/api";
 import ErrorAlert from "../../ErrorAlert";
-import trashCan from '../../utils/icons/trash-outline.svg';
-import cart from '../../utils/icons/cart-outline.svg';
 
 export default function OrderScreen({ form }) {
     const [items, setItems] = useState([]);
     const [error, setError] = useState([]);
-    const [orderSize, setOrderSize] = useState(0);
-    let order = [];
+    const [order, setOrder] = useState([]);
 
     function loadItems() {
         const abortController = new AbortController();
         listItems(abortController.signal)
-            .then(setItems);
+            .then(data => {
+                console.log(data)
+                setItems(data)
+            });
         return () => abortController.abort();
     }
 
     useEffect(loadItems, []);
 
 
-    const handleChange = (event) => {
+    const handleChange = (event, item) => {
         event.preventDefault();
-        window.alert(`Item added: ${event.target.name}`);
-        let item = {
-            item_name: event.target.name,
-            item_url: event.target.value,
-            item_id: event.target.id,
-        }
-        order.push(item)
-    }
+        const quantity = parseInt(event.target.value, 10); // Get the inputted quantity
+        // Create a new order array with the existing items
+        const newOrder = [...order];
 
-    const handleDelete = (event) => {
-        event.preventDefault();
-        window.alert(`Item removed: ${event.target.name}`);
-        let index = order.findIndex(o => o.item_id === event.target.id);
-        order.splice(index, 1);
-        setError(`${event.target.name} removed`);
-        if (orderSize > 0) {
-            setOrderSize(orderSize - 1);
-        } else {
-            setOrderSize(0);
+        // Push the item URL to the order array the specified number of times
+        for (let i = 0; i < quantity; i++) {
+            newOrder.push({
+                item_name: item.item_name,
+                item_url: item.item_url,
+                item_id: item.item_id,
+            });
         }
-    }
+
+        // Update the order state variable
+        setOrder(newOrder);
+    };
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const abortController = new AbortController();
+
+        // Extract only the URLs
+        const orderUrls = order.map(item => item.item_url);
+
         try {
-            console.log(order);
-            await callBot(form, order, abortController.signal)
+            console.log(orderUrls);
+            await callBot(form, orderUrls, abortController.signal)
                 .then(window.alert("Order has been placed and bot has been called. Review your cart on the website!"))
-                .then(order = []);
         } catch (err) {
             setError([err.message]);
         }
+        setOrder([]);
         return () => abortController.abort();
-    }
+    };
 
     const handleRemoveItem = async (item_id) => {
         const abortController = new AbortController();
@@ -103,24 +103,10 @@ export default function OrderScreen({ form }) {
                                 <p className="card-text">Control: {item.item_control}</p>
                                 <div className="img-row">
                                     <input
-                                        type="image"
-                                        src={trashCan}
-                                        className="removeFromOrder"
-                                        onClick={handleDelete}
-                                        value={item.item_url}
-                                        id={item.item_id}
-                                        name={item.item_name}
-                                        alt="remove from order"
-                                    />
-                                    <input
-                                        type="image"
-                                        src={cart}
+                                        type="number"
                                         className="addToOrder"
-                                        onClick={handleChange}
-                                        value={item.item_url}
-                                        id={item.item_id}
-                                        name={item.item_name}
-                                        alt="add to order"
+                                        onChange={(e) => handleChange(e, item)}
+                                        placeholder="Enter quantity"
                                     />
                                 </div>
                             </div>

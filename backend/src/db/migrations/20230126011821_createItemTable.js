@@ -7,7 +7,7 @@ exports.up = function(knex) {
         table.increments("item_id").primary();
         table.string("item_name");
         table.string("item_url");
-        table.bytea("item_jpg");
+        table.string("item_jpg");
         table.integer("item_control");
         table.string("item_type");
     });

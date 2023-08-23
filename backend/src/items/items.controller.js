@@ -60,7 +60,7 @@ async function create(req, res) {
     let supplyOrder = [];
     let items = req.body.order;
     for (let i = 0; i < items.length; i++) {
-        supplyOrder.push(items[i].item_url);
+        supplyOrder.push(items[i]);
     }
     checkout(form, supplyOrder)
     let success = "success"
