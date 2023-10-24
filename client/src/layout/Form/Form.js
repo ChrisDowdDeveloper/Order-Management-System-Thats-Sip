@@ -1,34 +1,40 @@
 import React from "react";
-import './form.css';
 
 
 function Form({ handleChange, form }) {
     return (
         <form>
-            <div className="email">
-            <label htmlFor="email" className="form-label">Email</label>
-                <input
-                    id="email"
-                    type="text"
-                    name="email"
-                    onChange={handleChange}
-                    value={form.email || ""}
-                    required
-                />
+            <div className="field">
+                <label htmlFor="email" className="label">Email</label>
+                <div className="control">
+                    <input
+                        id="email"
+                        type="text"
+                        name="email"
+                        className="input"
+                        onChange={handleChange}
+                        value={form.email || ""}
+                        required
+                    />
+                </div>
             </div>
-            <div className="password">
-                <label htmlFor="password" className="form-label">Password</label>
-                <input
-                    id="password"
-                    type="password"
-                    name="password"
-                    onChange={handleChange}
-                    value={form.password || ""}
-                    required
-                />
+            <div className="field">
+                <label htmlFor="password" className="label">Password</label>
+                <div className="control">
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        className="input"
+                        onChange={handleChange}
+                        value={form.password || ""}
+                        required
+                    />
+                </div>
             </div>
         </form>
     );
 }
+
 
 export default Form;

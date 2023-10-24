@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import Form from '../Form/Form';
 import OrderScreen from '../OrderScreen/OrderScreen';
 import logo from '../../utils/images/ThatsSip.png';
-import './login.css';
 
 export default function Login() {
     const [form, setForm] = useState({
@@ -10,10 +9,9 @@ export default function Login() {
         password: "",
     })
 
-
+    // Handles the inputs into the login form
     const handleChange = (event) => {
         event.preventDefault();
-        console.log(event.target.name)
         setForm({
             ...form,
             [event.target.name]: event.target.value,
@@ -21,16 +19,29 @@ export default function Login() {
     };
 
     return (
-        <div>
-            <img src={logo} alt="That's Sip Logo" className='logo'/>
-            <h1>Order Management System(OMS)</h1>
-            <Form
-                handleChange={handleChange}
-                form={form}
-            />
-            <OrderScreen 
-                form={form}
-            />
-        </div >
+        <div className="section">
+            <div className="container">
+                <div className="columns is-centered">
+                    <div className="column is-half">
+                        <div className="box">
+                            <figure className="image is-128x128 has-image-centered">
+                                <img src={logo} alt="That's Sip Logo" className="is-rounded" />
+                            </figure>
+                            <h1 className="title is-4 has-text-centered">Order Management System (OMS)</h1>
+          
+                            <Form
+                                handleChange={handleChange}
+                                form={form}
+                            />
+
+                            <OrderScreen
+                                form={form}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     )
 }

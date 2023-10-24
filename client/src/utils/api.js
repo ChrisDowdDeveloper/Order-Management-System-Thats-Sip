@@ -41,7 +41,6 @@ async function fetchJson(url, options, onCancel) {
 }
 
 export async function callBot(form, order, signal) {
-    console.log("bot called, api.js")
     const url = new URL(`http://localhost:8080/items`);
     const options = {
         method: "PUT",
@@ -58,7 +57,6 @@ export async function listItems(signal) {
 }
 
 export async function createItem(data, signal) {
-    console.log(data);
     const url = 'http://localhost:8080/items';
     const options = {
         method: "POST",

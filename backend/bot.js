@@ -5,21 +5,28 @@ const cart_url = "https://www.webstaurantstore.com/cart/";
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+// Initializes a Selenium WebDriver
 async function givePage() {
     let driver = await new Builder().forBrowser('chrome').build();
     return driver;
 }
 
+// Takes the WebDriver and the login information as inputs
 async function loginPage(driver, form) {
+    
+    // Navigates to the login page and enters in the information that is provided and waits 3 seconds
     await driver.get(login_url);
     await driver.findElement(By.id('email')).sendKeys(form.email);
     await driver.findElement(By.id('password')).sendKeys(form.password, Key.RETURN);
     await delay(3000);
 }
 
-async function addToCart(driver, temp) {
-    for (let i = 0; i < temp.length; i++) {
-        const url = temp[i];
+// Takes the WebDriver and the order being placed as inputs
+async function addToCart(driver, order) {
+
+    // Loops through the array of the orders and verifies that the orders have valid urls
+    for (let i = 0; i < order.length; i++) {
+        const url = order[i];
         if (!url) {
             console.error(`URL at position ${i} is undefined or null.`);
             continue;
@@ -28,6 +35,8 @@ async function addToCart(driver, temp) {
             console.error(`URL at position ${i} is not a valid URL: ${url}`);
             continue;
         }
+
+        // Navigates to each URL and verifies if the item can be ordered, if so, it adds to cart. If not, skips to the next item
         try {
             await driver.get(url);
             const isUnavailable = await driver.findElement(By.id('unavailableContainer')).catch(() => null);
@@ -49,12 +58,28 @@ async function addToCart(driver, temp) {
     }
 }
 
-async function checkout(form, temp) {
+
+
+
+
+
+async function checkout(form, order) {
+    // Calls the givePage() function to get the WebDriver
     const driver = await givePage();
+
+    // Calls the loginPage() function providing the form and WebDriver as arguments
     await loginPage(driver, form);
+
+    // Waits 1 second
     await delay(1000);
-    await addToCart(driver, temp);
+
+    // Calls the addToCart() function providing the WebDriver and the order as arguments
+    await addToCart(driver, order);
+
+    // Waits 1 second
     await delay(1000);
+
+    // WebDriver stops
     await driver.quit();
 }
 

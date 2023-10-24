@@ -1,82 +1,35 @@
-.itemsRow {
+.card-content {
+    padding: 0 !important;
+}
+
+.is-small.input, .is-small.textarea {
+    width: 45%;
+}
+
+.inline {
     display: flex;
-    flex-wrap: wrap;
-}
-
-.addButton {
-    width: 94%;
-    background-color: #76DD64;
-    margin-left: 2%;
-    border: none;
-    border-radius: 30px 30px 0 0;
-}
-
-.item {
-    width: 30%;
-    border: 1px solid black;
-    margin-top: 0;
-    margin-left: 2%;
-
-}
-
-.row {
-    display: flex;
-    flex-direction: row;
-    margin-right: 2%;
-    width: 100%;
-}
-
-.removeItem {
-    border: none;
-    background-color: #E83E3E;
-    font-weight: bold;
-    height: 15em;
-    color: white;
-    margin: auto;
-}
-
-.productImage {
-    width: 40%;
-}
-
-.column {
-    display: flex;
-    flex-direction: column;
-}
-
-.card-title {
-    text-align: center;
-    font-size: larger;
-    font-weight: bold;
-}
-
-.card-text {
-    margin-top: 35%;
-    text-align: center;
-}
-
-.img-row {
-    margin-top: 5%;
-    display: flex;
+    align-items: center;
     justify-content: space-between;
-}
-
-.itemName {
     text-align: center;
 }
 
-.removeFromOrder {
-    width: 20%;
-    margin: auto;
-    filter: invert(0.5) sepia(1) saturate(5) hue-rotate(490deg)
+.title.is-5 {
+    text-align: center;
+    padding-bottom: 10%;
 }
 
-.addToOrder {
-    width: 100%;
+.subtitle.is-7 {
+    margin: 3%;
 }
 
-.itemRow {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
+@media only screen and (min-width: 1024px)  {
+    .inline {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .inline .subtitle.is-7 {
+        margin-top: auto;
+        margin-bottom: auto;
+    }
 }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listItems, callBot, deleteItem } from "../../utils/api";
 import ErrorAlert from "../../ErrorAlert";
+import "./orderScreen.css"
 
 export default function OrderScreen({ form }) {
     const [items, setItems] = useState([]);
@@ -9,11 +10,11 @@ export default function OrderScreen({ form }) {
     const [order, setOrder] = useState([]);
     const [itemOrdered, setItemOrdered] = useState({});
 
+    // Loads all items in the database
     function loadItems() {
         const abortController = new AbortController();
         listItems(abortController.signal)
             .then(data => {
-                console.log(data)
                 setItems(data)
             });
         return () => abortController.abort();
@@ -51,11 +52,8 @@ export default function OrderScreen({ form }) {
         });
         setOrder(newOrder);
     };
-    
 
-    console.log(order)
-
-
+    // Handles when the order is called by the submit button being pressed
     const handleSubmit = async (event) => {
         event.preventDefault();
         const abortController = new AbortController();
@@ -63,8 +61,8 @@ export default function OrderScreen({ form }) {
         // Extract only the URLs
         const orderUrls = order.map(item => item.item_url);
 
+        // Calls the Selenium WebDriver in the backend to start the automation
         try {
-            console.log(orderUrls);
             await callBot(form, orderUrls, abortController.signal)
                 .then(window.alert("Order has been placed and bot has been called. Review your cart on the website!"))
         } catch (err) {
@@ -74,6 +72,7 @@ export default function OrderScreen({ form }) {
         return () => abortController.abort();
     };
 
+    // Handles the deletion of a product or supply item
     const handleRemoveItem = async (item_id) => {
         const abortController = new AbortController();
         try {
@@ -89,7 +88,7 @@ export default function OrderScreen({ form }) {
 
     return (
         <div className="section">
-            <div className="container">
+            <div className="container container-wide">
                 <ErrorAlert error={error} />
                 <div className="buttons">
                     <button onClick={handleSubmit} className="button is-primary">
@@ -101,7 +100,7 @@ export default function OrderScreen({ form }) {
                 </div>
                 <div className="columns is-multiline">
                     {items.map(item => (
-                        <div className="column is-one-third" key={item.item_id}>
+                        <div className="column is-one-third-desktop is-half-tablet is-full-mobile" key={item.item_id}>
                             <div className="card">
                                 <div className="card-image">
                                     <figure className="image is-4by3">
@@ -110,16 +109,18 @@ export default function OrderScreen({ form }) {
                                 </div>
                                 <div className="card-content">
                                     <div className="content">
-                                        <p className="title is-4">{item.item_name}</p>
-                                        <p className="subtitle is-6">Control: {item.item_control}</p>
-                                        <p className="subtitle is-6">On Hand: </p>
-                                        <input
-                                            type="number"
-                                            className="input"
-                                            onChange={(e) => handleChange(e, item)}
-                                            placeholder="Enter quantity"
-                                        />
-                                        <p className="subtitle is-6">To Order: {itemOrdered[item.item_id] || 0}</p>
+                                        <p className="title is-5">{item.item_name}</p>
+                                        <p className="subtitle is-7">Control: {item.item_control}</p>
+                                        <div className="inline">
+                                            <p className="subtitle is-7">On Hand: </p>
+                                            <input
+                                                type="number"
+                                                className="input is-small"
+                                                onChange={(e) => handleChange(e, item)}
+                                                placeholder="Enter quantity"
+                                            />
+                                        </div>
+                                        <p className="subtitle is-7">To Order: {itemOrdered[item.item_id] || 0}</p>
                                     </div>
                                 </div>
                                 <footer className="card-footer">
