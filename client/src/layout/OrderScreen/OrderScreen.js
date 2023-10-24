@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "./orderScreen.css";
 import { listItems, callBot, deleteItem } from "../../utils/api";
 import ErrorAlert from "../../ErrorAlert";
 
@@ -8,6 +7,7 @@ export default function OrderScreen({ form }) {
     const [items, setItems] = useState([]);
     const [error, setError] = useState([]);
     const [order, setOrder] = useState([]);
+    const [itemOrdered, setItemOrdered] = useState({});
 
     function loadItems() {
         const abortController = new AbortController();
@@ -24,22 +24,36 @@ export default function OrderScreen({ form }) {
 
     const handleChange = (event, item) => {
         event.preventDefault();
-        const quantity = parseInt(event.target.value, 10); // Get the inputted quantity
-        // Create a new order array with the existing items
-        const newOrder = [...order];
-
-        // Push the item URL to the order array the specified number of times
-        for (let i = 0; i < quantity; i++) {
-            newOrder.push({
-                item_name: item.item_name,
-                item_url: item.item_url,
-                item_id: item.item_id,
-            });
+        const onHand = parseInt(event.target.value);
+        const toOrder = item.item_control - onHand;
+    
+        // Create a new copy of the existing order array
+        let newOrder = [...order];
+    
+        // Remove the current item from the newOrder array
+        newOrder = newOrder.filter(orderItem => orderItem.item_id !== item.item_id);
+    
+        // If we still need more of this item (toOrder > 0), then add it to the newOrder array
+        if (toOrder > 0) {
+            for (let i = 0; i < toOrder; i++) {
+                newOrder.push({
+                    item_name: item.item_name,
+                    item_url: item.item_url,
+                    item_id: item.item_id,
+                });
+            }
         }
-
-        // Update the order state variable
+    
+        // Update the itemOrdered and order state variables
+        setItemOrdered({
+            ...itemOrdered,
+            [item.item_id]: toOrder > 0 ? toOrder : 0,
+        });
         setOrder(newOrder);
     };
+    
+
+    console.log(order)
 
 
     const handleSubmit = async (event) => {
@@ -74,46 +88,50 @@ export default function OrderScreen({ form }) {
     };
 
     return (
-        <div className="height">
-            <ErrorAlert error={error} />
-            <button onClick={handleSubmit} type="submit" className="btn btn-primary m-2">
-                Submit
-            </button>
-            <br />
-            <button
-                className="addButton"
-            >
-                <Link to="/items/new">
-                    Add Items
-                </Link>
-            </button>
-            <div className="itemsRow">
-                {items.map(item => (
-                    <div className="item" key={item.item_id}>
-                        <div className="row">
-                            <button
-                                className="removeItem"
-                                onClick={() => handleRemoveItem(item.item_id)}
-                            >
-                                X
-                            </button>
-                            <img src={item.item_jpg} className="productImage" alt="the item" />
-                            <div className="column">
-                                <h1 className="card-title">{item.item_name}</h1>
-                                <p className="card-text">Control: {item.item_control}</p>
-                                <div className="img-row">
-                                    <input
-                                        type="number"
-                                        className="addToOrder"
-                                        onChange={(e) => handleChange(e, item)}
-                                        placeholder="Enter quantity"
-                                    />
+        <div className="section">
+            <div className="container">
+                <ErrorAlert error={error} />
+                <div className="buttons">
+                    <button onClick={handleSubmit} className="button is-primary">
+                        Submit
+                    </button>
+                    <Link to="/items/new" className="button is-info">
+                        Add Items
+                    </Link>
+                </div>
+                <div className="columns is-multiline">
+                    {items.map(item => (
+                        <div className="column is-one-third" key={item.item_id}>
+                            <div className="card">
+                                <div className="card-image">
+                                    <figure className="image is-4by3">
+                                        <img src={item.item_jpg} alt="the item" />
+                                    </figure>
                                 </div>
+                                <div className="card-content">
+                                    <div className="content">
+                                        <p className="title is-4">{item.item_name}</p>
+                                        <p className="subtitle is-6">Control: {item.item_control}</p>
+                                        <p className="subtitle is-6">On Hand: </p>
+                                        <input
+                                            type="number"
+                                            className="input"
+                                            onChange={(e) => handleChange(e, item)}
+                                            placeholder="Enter quantity"
+                                        />
+                                        <p className="subtitle is-6">To Order: {itemOrdered[item.item_id] || 0}</p>
+                                    </div>
+                                </div>
+                                <footer className="card-footer">
+                                    <a href="#" onClick={() => handleRemoveItem(item.item_id)} className="card-footer-item has-text-danger">
+                                        Remove
+                                    </a>
+                                </footer>
                             </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
         </div>
-    )
-}
+    );
+}    

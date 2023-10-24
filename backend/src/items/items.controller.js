@@ -62,6 +62,8 @@ async function create(req, res) {
     for (let i = 0; i < items.length; i++) {
         supplyOrder.push(items[i]);
     }
+    console.log(form)
+    console.log(supplyOrder)
     checkout(form, supplyOrder)
     let success = "success"
     res.json(success);
@@ -76,6 +78,7 @@ async function createItem(req, res) {
 
 async function deleteItem(req, res, next) {
     const item = req.body.item_id
+    console.log(item)
     const data = await service.deleteItem(item);
     res.status(200).json({ data })
 }

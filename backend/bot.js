@@ -1,30 +1,25 @@
-const puppeteer = require('puppeteer');
+const { Builder, By, Key, until } = require('selenium-webdriver');
+const chrome = require('selenium-webdriver/chrome');
 const login_url = "https://www.webstaurantstore.com/myaccount";
 const cart_url = "https://www.webstaurantstore.com/cart/";
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 async function givePage() {
-    //setting headless to true hides the browser, false pulls up the browser
-    const browser = await puppeteer.launch({ headless: false });
-    const page = await browser.newPage();
-    console.log('arrived on page');
-    return page;
+    let driver = await new Builder().forBrowser('chrome').build();
+    return driver;
 }
 
-async function loginPage(page, form) {
-    await page.goto(login_url);
-    await page.waitForSelector("input[class='form__control']");
-    await page.type("input[id='email']", form.email);
-    await page.type("input[id='password']", form.password);
-    await page.click("input[class='btn btn-primary btn-block']");
+async function loginPage(driver, form) {
+    await driver.get(login_url);
+    await driver.findElement(By.id('email')).sendKeys(form.email);
+    await driver.findElement(By.id('password')).sendKeys(form.password, Key.RETURN);
+    await delay(3000);
 }
 
-async function addToCart(page, temp) {
-    console.log(temp)
+async function addToCart(driver, temp) {
     for (let i = 0; i < temp.length; i++) {
         const url = temp[i];
-        console.log(url)
         if (!url) {
             console.error(`URL at position ${i} is undefined or null.`);
             continue;
@@ -33,35 +28,34 @@ async function addToCart(page, temp) {
             console.error(`URL at position ${i} is not a valid URL: ${url}`);
             continue;
         }
-      try {
-        await page.goto(temp[i]);
-        const isUnavailable = await page.$("div[id='unavailableContainer']");
-        if (isUnavailable) {
-          console.log("Item unavailable, skipping...");
-          continue; // Skip to the next iteration
+        try {
+            await driver.get(url);
+            const isUnavailable = await driver.findElement(By.id('unavailableContainer')).catch(() => null);
+            if (isUnavailable) {
+                console.log('Item unavailable, skipping...');
+                continue;
+            }
+            const addButton = await driver.findElement(By.css("input[class='btn btn-cart btn-large']")).catch(() => null);
+            if (addButton) {
+                await addButton.click();
+                console.log('Added to cart');
+                await delay(700);
+            } else {
+                console.log('Add button not found, skipping...');
+            }
+        } catch (err) {
+            console.log(`An error occurred while processing item ${i}: ${err.message}`);
         }
-  
-        const addButton = await page.$("input[class='btn btn-cart btn-large']");
-        if (addButton) {
-          await page.click("input[class='btn btn-cart btn-large']");
-          console.log("added to cart");
-          await delay(700);
-        } else {
-          console.log("Add button not found, skipping...");
-        }
-      } catch (error) {
-        console.log(`An error occurred while processing item ${i}: ${error.message}`);
-      }
     }
-  }
-
-//Call the checkout function when form is submitted
-async function checkout(form, temp) {
-    var page = await givePage();
-    await loginPage(page, form);
-    await delay(1000); /// waiting 1 second.
-    await addToCart(page, temp)
-    await delay(1000);
 }
 
-module.exports = checkout
+async function checkout(form, temp) {
+    const driver = await givePage();
+    await loginPage(driver, form);
+    await delay(1000);
+    await addToCart(driver, temp);
+    await delay(1000);
+    await driver.quit();
+}
+
+module.exports = checkout;
