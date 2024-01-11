@@ -1,5 +1,3 @@
-const API_BASE_URL =
-    process.env.REACT_APP_API_BASE_URL || "";
 /**
  * Defines the default headers for these functions to work with a `json-server`
  */
@@ -40,12 +38,12 @@ async function fetchJson(url, options, onCancel) {
     }
 }
 
-export async function callBot(form, order, signal) {
+export async function callBot(order, signal) {
     const url = new URL(`http://localhost:8080/items`);
     const options = {
         method: "PUT",
         headers,
-        body: JSON.stringify({ form, order }),
+        body: JSON.stringify({ order }),
         signal,
     };
     return await fetchJson(url, options);

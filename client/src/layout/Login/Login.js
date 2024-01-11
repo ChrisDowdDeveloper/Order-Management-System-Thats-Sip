@@ -1,23 +1,8 @@
-import React, { useState } from 'react';
-import Form from '../Form/Form';
+import React from 'react';
 import OrderScreen from '../OrderScreen/OrderScreen';
 import logo from '../../utils/images/ThatsSip.png';
 
 export default function Login() {
-    const [form, setForm] = useState({
-        email: "",
-        password: "",
-    })
-
-    // Handles the inputs into the login form
-    const handleChange = (event) => {
-        event.preventDefault();
-        setForm({
-            ...form,
-            [event.target.name]: event.target.value,
-        });
-    };
-
     return (
         <div className="section">
             <div className="container">
@@ -28,15 +13,7 @@ export default function Login() {
                                 <img src={logo} alt="That's Sip Logo" className="is-rounded" />
                             </figure>
                             <h1 className="title is-4 has-text-centered">Order Management System (OMS)</h1>
-          
-                            <Form
-                                handleChange={handleChange}
-                                form={form}
-                            />
-
-                            <OrderScreen
-                                form={form}
-                            />
+                            <OrderScreen />
                         </div>
                     </div>
                 </div>

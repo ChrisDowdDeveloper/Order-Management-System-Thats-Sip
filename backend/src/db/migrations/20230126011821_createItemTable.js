@@ -4,12 +4,13 @@
  */
 exports.up = function(knex) {
     return knex.schema.createTable("items", (table) => {
-        table.increments("item_id").primary();
-        table.string("item_name");
-        table.string("item_url");
-        table.string("item_jpg");
-        table.integer("item_control");
-        table.string("item_type");
+        table.increments("itemId").primary();
+        table.string("itemName");
+        table.string("itemUrl");
+        table.string("itemJpg");
+        table.integer("itemControl");
+        table.string("itemType");
+        table.string("itemSubType")
     });
 };
 

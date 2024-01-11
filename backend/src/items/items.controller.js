@@ -60,13 +60,12 @@ async function list(req, res) {
 
 // Creates the order and calls bot.js to begin the automation 
 async function create(req, res) {
-    let form = req.body.form;
     let supplyOrder = [];
     let items = req.body.order;
     for (let i = 0; i < items.length; i++) {
         supplyOrder.push(items[i]);
     }
-    checkout(form, supplyOrder)
+    checkout(supplyOrder)
     let success = "success"
     res.json(success);
 }

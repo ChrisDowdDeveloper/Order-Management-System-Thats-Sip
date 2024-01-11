@@ -1,86 +1,165 @@
-const { Builder, By, Key, until } = require('selenium-webdriver');
+const { Builder, By, Key, until} = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
-const login_url = "https://www.webstaurantstore.com/myaccount";
-const cart_url = "https://www.webstaurantstore.com/cart/";
+
+let driver;
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-// Initializes a Selenium WebDriver
-async function givePage() {
-    let driver = await new Builder().forBrowser('chrome').build();
+async function createDriver() {
+    if (!driver) {
+        let builder = new Builder().forBrowser('chrome');
+        let chromeOptions = new chrome.Options();
+        driver = await builder.setChromeOptions(chromeOptions).build();
+    }
     return driver;
 }
 
+async function closeDriver() {
+    if(driver) {
+        await driver.quit();
+        driver = null;
+    }
+}
+
 // Takes the WebDriver and the login information as inputs
-async function loginPage(driver, form) {
+async function loginYourBrand(driver) {
     
     // Navigates to the login page and enters in the information that is provided and waits 3 seconds
-    await driver.get(login_url);
-    await driver.findElement(By.id('email')).sendKeys(form.email);
-    await driver.findElement(By.id('password')).sendKeys(form.password, Key.RETURN);
+    await driver.get("https://www.yourbrandcafe.com/my-account/");
+    const usernameYourBrand = process.env.YOURBRAND_EMAIL;
+    const passwordYourBrand = process.env.YOURBRAND_PASSWORD;
+    await driver.wait(until.elementLocated(By.id('email')), 10000);
+    await driver.findElement(By.id('email')).sendKeys("jennifer");
+    await driver.wait(until.elementLocated(By.id('password')), 10000);
+    await driver.findElement(By.id('password')).sendKeys("lunsford", Key.RETURN);
     await delay(3000);
 }
 
-// Takes the WebDriver and the order being placed as inputs
-async function addToCart(driver, order) {
+async function loginWebstaurant(driver) {
+    const usernameWebstaurant = process.env.WEBSTAURANT_EMAIL;
+    const passwordWebstaurant = process.env.WEBSTAURANT_PASSWORD;
 
-    // Loops through the array of the orders and verifies that the orders have valid urls
-    for (let i = 0; i < order.length; i++) {
-        const url = order[i];
-        if (!url) {
-            console.error(`URL at position ${i} is undefined or null.`);
-            continue;
-        }
-        if (typeof url !== 'string' || !url.startsWith('http')) {
-            console.error(`URL at position ${i} is not a valid URL: ${url}`);
-            continue;
-        }
+    await driver.get("https://www.webstaurantstore.com/myaccount");
 
-        // Navigates to each URL and verifies if the item can be ordered, if so, it adds to cart. If not, skips to the next item
-        try {
-            await driver.get(url);
-            const isUnavailable = await driver.findElement(By.id('unavailableContainer')).catch(() => null);
-            if (isUnavailable) {
-                console.log('Item unavailable, skipping...');
-                continue;
-            }
-            const addButton = await driver.findElement(By.css("input[class='btn btn-cart btn-large']")).catch(() => null);
-            if (addButton) {
-                await addButton.click();
-                console.log('Added to cart');
-                await delay(700);
+    const emailField = await driver.wait(until.elementLocated(By.id('email')), 10000);
+    await emailField.sendKeys(usernameWebstaurant);
+
+    const passwordField = await driver.wait(until.elementLocated(By.id('password')), 10000);
+    await passwordField.sendKeys(passwordWebstaurant, Key.RETURN);
+
+    await delay(3000);
+}
+
+async function yourBrandLogic(yourBrandUrls, driver) {
+    try {
+        for(let j = 0; j < yourBrandUrls.length; j++) {
+            let current = yourBrandUrls[j];
+            if(current.includes("https://www.yourbrandcafe.com/products/flat-lids") || url.includes("https://www.yourbrandcafe.com/products/eco")) {
+                try {
+                    driver.get(current);
+                    let addButton = driver.findElement(By.className("single_add_to_cart_button"));
+                    addButton.click();
+                } catch(error) {
+                    console.error(error);
+                }
             } else {
-                console.log('Add button not found, skipping...');
+                // Handle other products with additional attributes before adding to cart.
+                try {
+                    // The following block repeats the steps of navigating to the URL,
+                    // finding elements by name or XPath, clicking them, and waiting as necessary.
+                    driver.get(url);
+                    let printOpt = driver.findElement(By.name("tm_attribute_pa_print-type_1"));
+                    printOpt.click();
+                    await delay(2000); // Wait for 2 seconds to allow for page update.
+                    let  printLoc = driver.findElement(By.name("tmcp_radio_0"));
+                    printLoc.click();
+                    await delay(2000);
+                    let artwork = driver.findElement(By.xpath("(//input[@name='tmcp_radio_5'])[2]"));
+                    artwork.click();
+                    await delay(2000);
+                    let verify = driver.findElement(By.name("tmcp_checkbox_9_0"));                        verify.click();
+                    await delay(2000);
+                    let addButton = driver.findElement(By.className("single_add_to_cart_button"));
+                    addButton.click(); // Click the add-to-cart button.
+                    await delay(2000); // Wait for 2 seconds after adding to cart.
+                } catch(error) {
+                    console.error(error); // Print the exception if an element is not found.
+                }
             }
-        } catch (err) {
-            console.log(`An error occurred while processing item ${i}: ${err.message}`);
         }
+    } catch(e) {
+        console.error(e);
+    }
+}
+
+async function webstaurantLogic(webstaurantUrls, driver) {
+    try {
+        for(let k = 0; k < webstaurantUrls.length; k++) {
+            let currentWeb = webstaurantUrls[k];
+            try {
+                driver.get(currentWeb);
+                try {
+                    let addButton = driver.findElement(By.id("buyButton"));
+                    if (addButton != null) {
+                        addButton.click(); // Click the add-to-cart button if found.
+                        await delay(3000); // Wait for 3 second after adding.
+                    } else {
+                        // Handle cases where the product is unavailable.
+                        let isUnavailable = driver.findElement(By.id("unavailableContainer"));
+                        if (isUnavailable != null) {
+                            console.log("item unavailable: " + currentWeb);
+                            continue; // Skip adding this item and continue with the next.
+                        }
+                    }
+                } catch(error) {
+                    console.error(error);
+                }
+            } catch(error) {
+                console.error(error);
+            }
+        }
+    } catch (error) {
+        
     }
 }
 
 
+async function addToCart(driver, order) {
+    let yourBrandUrls = [];
+    let webstaurantUrls = [];
+    for(let i = 0; i < order.length; i++) {
+        const url = order[i];
+        if(!url) {
+            console.error(`URL at position ${i} is undefined or null.`);
+            continue;
+        }
+        if(typeof url !== 'string' || !url.startsWith('http')) {
+            console.error(`URL at position ${i} is not a valid url`);
+        }
+        if(url.includes("https://www.yourbrandcafe.com")) yourBrandUrls.push(url)
+        if(url.includes("https://www.webstaurantstore.com")) webstaurantUrls.push(url);
+    }
+    if(webstaurantUrls.length > 0) {
+        await loginWebstaurant(driver)
+        await webstaurantLogic(webstaurantUrls, driver);
+    }
+    if(yourBrandUrls.length > 0) {
+        await loginYourBrand(driver)
+        await yourBrandLogic(yourBrandUrls, driver);
+    }
+}
 
-
-
-
-async function checkout(form, order) {
-    // Calls the givePage() function to get the WebDriver
-    const driver = await givePage();
-
-    // Calls the loginPage() function providing the form and WebDriver as arguments
-    await loginPage(driver, form);
-
-    // Waits 1 second
-    await delay(1000);
-
-    // Calls the addToCart() function providing the WebDriver and the order as arguments
-    await addToCart(driver, order);
-
-    // Waits 1 second
-    await delay(1000);
-
-    // WebDriver stops
-    await driver.quit();
+async function checkout(order) {
+    try {
+        await createDriver();
+        await addToCart(driver, order);
+        await delay(2000);
+    } catch(error) {
+        console.error("Checkout error: " + error);
+    } finally {
+        await closeDriver();
+    }
+    
 }
 
 module.exports = checkout;

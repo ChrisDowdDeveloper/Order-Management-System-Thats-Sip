@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { listItems, callBot, deleteItem } from "../../utils/api";
 import ErrorAlert from "../../ErrorAlert";
 import "./orderScreen.css"
+import ItemsList from "../Items/ItemsList";
 
-export default function OrderScreen({ form }) {
+export default function OrderScreen() {
     const [items, setItems] = useState([]);
     const [error, setError] = useState([]);
     const [order, setOrder] = useState([]);
     const [itemOrdered, setItemOrdered] = useState({});
-
     // Loads all items in the database
     function loadItems() {
         const abortController = new AbortController();
@@ -21,7 +21,6 @@ export default function OrderScreen({ form }) {
     }
 
     useEffect(loadItems, []);
-
 
     const handleChange = (event, item) => {
         event.preventDefault();
@@ -63,7 +62,7 @@ export default function OrderScreen({ form }) {
 
         // Calls the Selenium WebDriver in the backend to start the automation
         try {
-            await callBot(form, orderUrls, abortController.signal)
+            await callBot(orderUrls, abortController.signal)
                 .then(window.alert("Order has been placed and bot has been called. Review your cart on the website!"))
         } catch (err) {
             setError([err.message]);
@@ -86,6 +85,18 @@ export default function OrderScreen({ form }) {
         return () => abortController.abort();
     };
 
+    let sugarFree = items.filter(item => item.itemSubType === "sugarFree");
+    let fruit = items.filter(item => item.itemSubType === "fruit");
+    let regular = items.filter(item => item.itemSubType === "regular");
+    let puree = items.filter(item => item.itemSubType === "puree");
+    let mocha = items.filter(item => item.itemSubType === "mocha");
+    let frappe = items.filter(item => item.itemSubType === "frappe");
+    let sauce = items.filter(item => item.itemSubType === "sauce");
+    let supplies = items.filter(item => item.itemSubType === "supplies");
+    let cups = items.filter(item => item.itemSubType === "cups");
+    let straws = items.filter(item => item.itemSubType === "straws");
+    let sugarPackets = items.filter(item => item.itemSubType === "sugarPackets");
+
     return (
         <div className="section">
             <div className="container container-wide">
@@ -99,38 +110,50 @@ export default function OrderScreen({ form }) {
                     </Link>
                 </div>
                 <div className="columns is-multiline">
-                    {items.map(item => (
-                        <div className="column is-one-third-desktop is-half-tablet is-full-mobile" key={item.item_id}>
-                            <div className="card">
-                                <div className="card-image">
-                                    <figure className="image is-4by3">
-                                        <img src={item.item_jpg} alt="the item" />
-                                    </figure>
-                                </div>
-                                <div className="card-content">
-                                    <div className="content">
-                                        <p className="title is-5">{item.item_name}</p>
-                                        <p className="subtitle is-7">Control: {item.item_control}</p>
-                                        <div className="inline">
-                                            <p className="subtitle is-7">On Hand: </p>
-                                            <input
-                                                type="number"
-                                                className="input is-small"
-                                                onChange={(e) => handleChange(e, item)}
-                                                placeholder="Enter quantity"
-                                            />
-                                        </div>
-                                        <p className="subtitle is-7">To Order: {itemOrdered[item.item_id] || 0}</p>
-                                    </div>
-                                </div>
-                                <footer className="card-footer">
-                                    <a href="#" onClick={() => handleRemoveItem(item.item_id)} className="card-footer-item has-text-danger">
-                                        Remove
-                                    </a>
-                                </footer>
-                            </div>
-                        </div>
-                    ))}
+                    <div className="column is-12">
+                        <h2 className="title is-3">Sugar Free</h2>
+                        <ItemsList items = {sugarFree} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem}/>
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Fruit</h2>
+                        <ItemsList items = {fruit} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Regular</h2>
+                        <ItemsList items = {regular} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">    
+                        <h2 className="title is-3">Puree</h2>
+                        <ItemsList items = {puree} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Mocha</h2>
+                        <ItemsList items = {mocha} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Frappe</h2>
+                        <ItemsList items = {frappe} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Sauce</h2>
+                        <ItemsList items = {sauce} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Supplies</h2>
+                        <ItemsList items = {supplies} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Cups</h2>
+                        <ItemsList items = {cups} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Straws</h2>
+                        <ItemsList items = {straws} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
+                    <div className="column is-12">
+                        <h2 className="title is-3">Sugar Packets</h2>
+                        <ItemsList items = {sugarPackets} handleChange = {handleChange} itemOrdered = {itemOrdered} handleRemoveItem = {handleRemoveItem} />
+                    </div>
                 </div>
             </div>
         </div>
